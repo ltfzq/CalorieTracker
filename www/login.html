@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <h3>Calorie Tracker</h3>
+      <h5>Your go-to app to Gain Weight</h5>
+      <form id="frmLogin" action="/login" method="POST">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+        <label for="password1">Password</label>
+        <!-- Changed ID to password1 -->
+        <input type="password" id="password1" name="password" required />
+        <label> <input type="checkbox" name="remember" /> Remember me </label>
+        <button type="submit">Login</button>
+        <button id="btnRegister" type="button" class="register-button">
+          Register
+        </button>
+        <div class="links">
+          <a href="/forgot-password">Forgot Password?</a>
+        </div>
+      </form>
+    </div>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/login.js"></script>
+  </body>
+</html>

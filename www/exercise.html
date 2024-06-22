@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise Entry</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/food.css" />
+  </head>
+  <body>
+    <div class="food-container">
+      <h2>Log Your Exercise</h2>
+      <form id="exerciseForm" action="/submit-exercise" method="POST">
+        <label for="exerciseType">Exercise Type</label>
+        <select id="exerciseType" name="exerciseType" required>
+          <option value="" disabled selected>Select Exercise Type</option>
+        </select>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/exercise.js"></script>
+  </body>
+</html>

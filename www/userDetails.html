@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/userDetails.css" />
+  </head>
+  <body>
+    <div class="details-container">
+      <h2>User Details</h2>
+      <form id="userDetailsForm" action="/submit-details" method="POST">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" required />
+
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" name="height" required />
+
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" name="weight" required />
+
+        <label for="targetWeight">Target Weight (kg)</label>
+        <input type="number" id="targetWeight" name="targetWeight" required />
+
+        <label for="workoutFrequency">Workouts per Week</label>
+        <input
+          type="number"
+          id="workoutFrequency"
+          name="workoutFrequency"
+          required
+        />
+
+        <button type="submit">Done</button>
+      </form>
+    </div>
+    <script type="module">
+      // Import the necessary Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+      } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCTingOh2tU960e09kqa4OWwL6G_oY83Qs",
+        authDomain: "calorie-counter-fb394.firebaseapp.com",
+        databaseURL:
+          "https://calorie-counter-fb394-default-rtdb.firebaseio.com",
+        projectId: "calorie-counter-fb394",
+        storageBucket: "calorie-counter-fb394.appspot.com",
+        messagingSenderId: "980627495817",
+        appId: "1:980627495817:web:c201ab11c81ee0c7149f58",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const database = getDatabase(app);
+
+      // Check authentication status
+
+      document
+        .getElementById("userDetailsForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Check if user is logged in
+          if (!sessionStorage.loggedin || sessionStorage.loggedin == null) {
+            alert("Please sign in to submit your details.");
+            return;
+          }
+
+          // Extract form data
+          const age = parseInt(document.getElementById("age").value);
+          const height = parseInt(document.getElementById("height").value);
+          const weight = parseInt(document.getElementById("weight").value);
+          const targetWeight = parseInt(
+            document.getElementById("targetWeight").value
+          );
+          const workoutFrequency = parseInt(
+            document.getElementById("workoutFrequency").value
+          );
+          const gender = "male";
+
+          // Calculate BMR using the Mifflin-St Jeor equation
+          let bmr;
+          if (gender === "male") {
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+          } else {
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+          }
+
+          // Calculate TDEE based on workout frequency
+          let activityFactor;
+          if (workoutFrequency <= 1) {
+            activityFactor = 1.2;
+          } else if (workoutFrequency <= 3) {
+            activityFactor = 1.375;
+          } else if (workoutFrequency <= 5) {
+            activityFactor = 1.55;
+          } else if (workoutFrequency <= 7) {
+            activityFactor = 1.725;
+          } else {
+            activityFactor = 1.9;
+          }
+
+          const tdee = bmr * activityFactor;
+
+          // Adjust TDEE for weight loss or gain
+          const calorieGoal = targetWeight < weight ? tdee - 500 : tdee + 500;
+
+          // Store the calorie goal in sessionStorage
+          sessionStorage.setItem("calorieGoal", calorieGoal);
+
+          // Store the calorie goal in Firebase Database // User is authenticated
+          set(ref(database, "users/" + age), {
+            age: age,
+            height: height,
+            weight: weight,
+            targetWeight: targetWeight,
+            workoutFrequency: workoutFrequency,
+            calorieGoal: calorieGoal,
+          })
+            .then(() => {
+              sessionStorage.detailsSubmitted = true;
+              // Redirect after successful submission
+              location.href = "index.html";
+            })
+            .catch((error) => {
+              console.error("Error storing user details:", error);
+              // Handle error gracefully
+            });
+        });
+    </script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/popper.min.js"></script>
+  </body>
+</html>
